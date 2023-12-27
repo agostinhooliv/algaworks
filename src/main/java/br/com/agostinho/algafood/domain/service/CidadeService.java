@@ -2,9 +2,11 @@ package br.com.agostinho.algafood.domain.service;
 
 import br.com.agostinho.algafood.domain.model.Cidade;
 import br.com.agostinho.algafood.domain.repository.CidadeRepository;
+import br.com.agostinho.algafood.exceptions.EntidadeEmUsoException;
 import br.com.agostinho.algafood.exceptions.ValidationException;
 import br.com.agostinho.algafood.utils.BeansCopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,15 +18,25 @@ public class CidadeService {
     @Autowired
     private CidadeRepository cidadeRepository;
 
+    private static final String MSG_CIDADE_EM_USO
+            = "Cidade de código %d não pode ser removida, pois está em uso";
+
     public Cidade criar(Cidade cidade){
         return cidadeRepository.save(cidade);
     }
 
     public void remover(Integer cidadeId){
-        Cidade cidade = cidadeRepository.findById(cidadeId)
-                .orElseThrow(() -> new ValidationException("There's no cidade found"));
 
-        cidadeRepository.delete(cidade);
+        try{
+
+            Cidade cidade = cidadeRepository.findById(cidadeId)
+                    .orElseThrow(() -> new ValidationException("There's no cidade found"));
+
+            cidadeRepository.delete(cidade);
+        } catch (DataIntegrityViolationException e){
+            throw new EntidadeEmUsoException(
+                    String.format(MSG_CIDADE_EM_USO, cidadeId));
+        }
     }
 
     public Cidade atualizar(Integer cidadeId, Cidade cidade){

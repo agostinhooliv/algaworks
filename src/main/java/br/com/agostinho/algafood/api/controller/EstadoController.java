@@ -2,6 +2,7 @@ package br.com.agostinho.algafood.api.controller;
 
 import br.com.agostinho.algafood.domain.model.Estado;
 import br.com.agostinho.algafood.domain.service.EstadosService;
+import br.com.agostinho.algafood.exceptions.EstadoNaoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

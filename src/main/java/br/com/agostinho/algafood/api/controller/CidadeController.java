@@ -1,17 +1,17 @@
 package br.com.agostinho.algafood.api.controller;
 
 import br.com.agostinho.algafood.domain.model.Cidade;
-import br.com.agostinho.algafood.domain.model.Estado;
 import br.com.agostinho.algafood.domain.service.CidadeService;
 import br.com.agostinho.algafood.domain.service.EstadosService;
-import br.com.agostinho.algafood.exceptions.ValidationException;
+import br.com.agostinho.algafood.exceptions.EntidadeNaoEncontradaException;
+import br.com.agostinho.algafood.exceptions.EstadoNaoEncontradoException;
+import br.com.agostinho.algafood.exceptions.NegocioException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,7 +76,13 @@ public class CidadeController {
     @PostMapping
     public ResponseEntity<Cidade> salvar(@RequestBody Cidade cidade) {
 
-        estadosService.buscarId(cidade.getEstado().getId().intValue());
+        Integer estadoId = cidade.getEstado().getId().intValue();
+
+        try {
+            estadosService.buscarId(estadoId);
+        }catch (EntidadeNaoEncontradaException e){
+            throw new EstadoNaoEncontradoException(String.format("Não existe um cadastro de estado com código %d", estadoId));
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(cidadeService.criar(cidade));
     }
@@ -118,11 +124,5 @@ public class CidadeController {
 
             ReflectionUtils.setField(field, cidadeDestino, novoValor);
         });
-    }
-
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<?> tratarEstadoNaoEncontradoException(ValidationException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(String.format("Testando ExceptionHandler"));
     }
 }
