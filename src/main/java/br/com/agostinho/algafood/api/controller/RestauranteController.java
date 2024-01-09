@@ -2,6 +2,7 @@ package br.com.agostinho.algafood.api.controller;
 
 import br.com.agostinho.algafood.domain.model.Restaurante;
 import br.com.agostinho.algafood.domain.service.RestauranteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +66,7 @@ public class RestauranteController {
     }
 
     @PostMapping
-    public ResponseEntity<Restaurante> salvar(@RequestBody Restaurante restaurante){
+    public ResponseEntity<Restaurante> salvar(@RequestBody @Valid Restaurante restaurante){
         return ResponseEntity.status(HttpStatus.CREATED).body(restauranteService.criar(restaurante));
     }
 

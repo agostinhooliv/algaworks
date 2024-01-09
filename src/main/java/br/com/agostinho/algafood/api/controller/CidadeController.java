@@ -5,8 +5,8 @@ import br.com.agostinho.algafood.domain.service.CidadeService;
 import br.com.agostinho.algafood.domain.service.EstadosService;
 import br.com.agostinho.algafood.exceptions.EntidadeNaoEncontradaException;
 import br.com.agostinho.algafood.exceptions.EstadoNaoEncontradoException;
-import br.com.agostinho.algafood.exceptions.NegocioException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,7 +74,7 @@ public class CidadeController {
     }
 
     @PostMapping
-    public ResponseEntity<Cidade> salvar(@RequestBody Cidade cidade) {
+    public ResponseEntity<Cidade> salvar(@RequestBody @Valid Cidade cidade) {
 
         Integer estadoId = cidade.getEstado().getId().intValue();
 

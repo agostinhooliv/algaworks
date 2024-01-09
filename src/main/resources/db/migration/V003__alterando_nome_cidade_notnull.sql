@@ -1,0 +1,1 @@
+ALTER TABLE cidade MODIFY `nome` varchar(255) NOT NULL;
